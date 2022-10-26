@@ -114,30 +114,55 @@ def status_401(error):
 def status_404(error):
     return render_template('404.html'), 404
 
-@app.route('/')
-def download_report():
-    pdf = FPDF('P', 'mm', 'A4')
-    pdf.add_page()
-    pdf.set_font('Times', 'B', 12)
-    pdf.set_fill_color(0, 0, 255)
-    pdf.cell(190, 10, "REPORTE GENERAL DE PRODUCTOS",10, 25,"C")
-    pdf.cell(8, 10, "PRODUCTO", 1, 0)
-    pdf.cell(50, 10, "CANTIDAD", 1, 0)
-    pdf.cell(45, 10, "VALOR", 1, 0)
+# @app.route('/download/report/pdf')
+# def download_report():
+#     conn = None
+#     cursor = None
+#     try:
+#         conn = db.connect()
+	    
+#         cursor = conn.cursor(db.cursors.DictCursor)
+		
+		
+#         cursor.execute("SELECT * FROM products")
+		
+#         result = cursor.fetchall()
+		
+# 	    pdf = FPDF()
+# 		pdf.add_page()
+		
+# 		page_width = pdf.w - 2 * pdf.l_margin
+		
+# 		pdf.set_font('Times','B',14.0) 
+# 		pdf.cell(page_width, 0.0, 'Products Data', align='C')
+# 		pdf.ln(10)
 
-    cursor = db.connection.cursor()
-    cursor.execute("SELECT * FROM products")
-    product = cursor.fetchall() 
+# 		pdf.set_font('Courier', '', 12)
+		
+# 		col_width = page_width/4
+		
+# 		pdf.ln(1)
+		
+# 		th = pdf.font_size
+		
+# 		for row in result:
+# 			pdf.cell(col_width, th, str(row['prod_code']), border=1)
+# 			pdf.cell(col_width, th, row['name'], border=1)
+# 			pdf.cell(col_width, th, row['stock'], border=1)
+# 			pdf.cell(col_width, th, row['value'], border=1)
+# 			pdf.ln(th)
+		
+# 		pdf.ln(10)
+		
+# 		pdf.set_font('Times','',10.0) 
+# 		pdf.cell(page_width, 0.0, '- end of report -', align='C')
 
-    for products in product:
-        name = products[1] 
-        stock = products[2]  
-        value = products[3] 
-        pdf.cell(8, 10,"producto=%s" % (name), 1, 0)
-        pdf.cell(50, 10,"cantidad=%s" % (stock), 1, 0)
-        pdf.cell(45, 10,"valor=%s" % (value) , 1, 0)
-
-        return pdf.output(name = "reporte_productos.pdf",dest='F')
+# 	except Exception as e:
+# 		print(e)
+# 	finally:
+# 		cursor.close() 
+# 		conn.close()
+#     return Response(pdf.output(dest='S').encode('latin-1'), mimetype='application/pdf', headers={'Content-Disposition':'attachment;filename=products_report.pdf'})
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
