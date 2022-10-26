@@ -34,6 +34,10 @@ body {
   border-top-right-radius: 0;
 }
 
+.form-signin .logo {
+  border-radius: 50%;
+} 
+
 .signup {
   display: grid;
   margin-top: 20px;

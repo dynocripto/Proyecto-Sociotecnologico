@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `user` (
-  `id` smallint(3) UNSIGNED NOT NULL,
+  `id` int UNSIGNED NOT NULL,
   `username` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `password` char(102) COLLATE utf8_unicode_ci NOT NULL,
   `fullname` varchar(50) COLLATE utf8_unicode_ci NOT NULL
@@ -37,9 +37,6 @@ CREATE TABLE `user` (
 --
 -- Volcado de datos para la tabla `user`
 --
-
-INSERT INTO `user` (`id`, `username`, `password`, `fullname`) VALUES
-(1, 'dynocripto', 'pbkdf2:sha256:260000$Me219eNzz7melSDE$c3c3163dbeb38ecb2a5580220c8cfaf54e73e3a989cba56fab39764007dd193e', 'José Colmenares');
 
 --
 -- Índices para tablas volcadas

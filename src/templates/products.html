@@ -1,0 +1,49 @@
+{% extends './base.html' %}
+
+{% block title %}Products{% endblock %}
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+{% endblock %}
+
+{% block body %}
+   <div class="container">
+
+    <form class="form-signin" action="/products" method="POST">
+        <h1 class="h3 mb-3 fw-normal">Ingrese un nuevo producto</h1>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Producto">
+            <label for="name">Nombre del producto</label>
+        </div>
+        <div class="form-floating mt-2">
+            <input type="number" class="form-control" name="stock" placeholder="Cantidad">
+            <label for="stock">Cantidad disponible</label>
+        </div>
+        <div class="form-floating mt-2">
+            <input type="float" class="form-control" name="value" placeholder="Precio">
+            <label for="value">Precio por unidad</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary submit" type="submit">Guardar</button>
+    </form>
+
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad Disponible</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for products in product %}
+                    <tr>
+                        <td>{{ products.1 }}</td>
+                        <td>{{ products.2 }}</td>
+                        <td>{{ products.3 }} <span>$</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+   </div>
+{% endblock %}

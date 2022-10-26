@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
@@ -33,18 +34,18 @@ def login():
     if request.method == 'POST':
         # print(request.form['username'])
         # print(request.form['password'])
-        user = User(request.form['username'], request.form['password'])
+        user = User(0, request.form['username'], request.form['password'])
         logged_user = ModelUser.login(db, user)
-        # if logged_user != None:
-        #     if logged_user.password:
-        #         return redirect(url_for('home'))
-        #     else:
-        #         flash("Invalid password...")
-        #         return render_template('auth/login.html')
-        # else:
-        #     flash("User not found...")
-        #     return render_template('auth/login.html')
-        print(logged_user)
+        if logged_user != None:
+            if logged_user.password:
+                login_user(logged_user)
+                return redirect(url_for('home'))
+            else:
+                flash("Invalid password...")
+                return render_template('auth/login.html')
+        else:
+            flash("User not found...")
+            return render_template('auth/login.html')
     else:
         return render_template('auth/login.html')
 
@@ -55,10 +56,15 @@ def register():
         password = request.form['password']
         fullname = request.form['fullname']
         cur = db.connection.cursor()
-        cur.execute('''INSERT INTO user (username, password, fullname) 
-        VALUES (%s, %s, %s)''', (username, password, fullname))
+        # user_exist = cur.execute('SELECT username FROM user')
+        # # if user_exist != username:
+        cur.execute('INSERT INTO user (username, password, fullname) VALUES (%s, %s, %s)', 
+        (username, password, fullname))
         db.connection.commit()
-        redirect(url_for('login'))
+        flash('Usuario creado con éxito')
+        redirect(url_for('register'))
+        # else:
+        #     flash('Usuario ya existente')    
     return render_template('./auth/register.html')
 
 @app.route('/logout')
@@ -67,20 +73,37 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('home.html')
+    cur = db.connection.cursor()
+    cur.execute('SELECT fullname FROM user')
+    data = cur.fetchall()
+    return render_template('./home.html', user = data)
 
 @app.route('/about')
-@login_required
 def about():
     return render_template('about.html')
 
-@app.route('/protected')
-@login_required
-def protected():
-    return "<h1>Esta es una vista protegida, solo para usuarios autenticados.</h1>"
+@app.route('/products', methods=['GET', 'POST'])
+def products():
+    cur = db.connection.cursor()
+    cur.execute('SELECT * FROM products')
+    data = cur.fetchall()
+
+    if request.method == 'POST':
+        name = request.form['name']
+        stock = request.form['stock']
+        value = request.form['value']
+        cur = db.connection.cursor()
+        cur.execute('INSERT INTO products (name, stock, value) VALUES (%s, %s, %s)', 
+        (name, stock, value))
+        db.connection.commit()
+        flash('Producto registrado con éxito')
+        redirect(url_for('products'))
+
+    return render_template('products.html', product = data)
+
 
 
 def status_401(error):
