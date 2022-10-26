@@ -1,8 +1,9 @@
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, send_file
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required
+from fpdf import FPDF
 
 from config import config
 
@@ -113,6 +114,30 @@ def status_401(error):
 def status_404(error):
     return render_template('404.html'), 404
 
+@app.route('/')
+def download_report():
+    pdf = FPDF('P', 'mm', 'A4')
+    pdf.add_page()
+    pdf.set_font('Times', 'B', 12)
+    pdf.set_fill_color(0, 0, 255)
+    pdf.cell(190, 10, "REPORTE GENERAL DE PRODUCTOS",10, 25,"C")
+    pdf.cell(8, 10, "PRODUCTO", 1, 0)
+    pdf.cell(50, 10, "CANTIDAD", 1, 0)
+    pdf.cell(45, 10, "VALOR", 1, 0)
+
+    cursor = db.connection.cursor()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall() 
+
+    for products in product:
+        name = products[1] 
+        stock = products[2]  
+        value = products[3] 
+        pdf.cell(8, 10,"producto=%s" % (name), 1, 0)
+        pdf.cell(50, 10,"cantidad=%s" % (stock), 1, 0)
+        pdf.cell(45, 10,"valor=%s" % (value) , 1, 0)
+
+        return pdf.output(name = "reporte_productos.pdf",dest='F')
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])

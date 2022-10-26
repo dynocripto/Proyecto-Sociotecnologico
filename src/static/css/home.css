@@ -468,3 +468,9 @@ h1 {
     top:60px;
     left:370px;
   }
+
+.logout {
+    position: absolute;
+    z-index: 100;
+    margin-left: -5%;
+}
